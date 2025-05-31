@@ -1,0 +1,27 @@
+### Register a new user
+POST http://localhost:5003/auth/register
+Content-Type: application/json
+
+{
+  "username": "juan3",
+  "password": "123456"
+}
+
+### login a user
+POST http://localhost:5003/auth/login
+Content-Type: application/json
+
+{
+  "username": "juan3",
+  "password": "123456"
+}
+
+### Protected route with token
+GET http://localhost:5003/auth/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2E2Yzk1Nzc0ZmM0ZjVkMzdhNmMyZSIsInVzZXJuYW1lIjoianVhbjIiLCJpYXQiOjE3NDg2NTkzNTQsImV4cCI6MTc0ODY2Mjk1NH0.tHQ0PuDY4By8gw-uRWU09GSQhhcLxC8T4cDOUMTlAmE
+
+### Refresh access token
+POST http://localhost:5003/auth/refresh
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2I4MmExMGU5OTEwYzdhZmRjMjRkYiIsInVzZXJuYW1lIjoianVhbjMiLCJpYXQiOjE3NDg3MzA2MTEsImV4cCI6MTc0ODczNDIxMX0.qogQBte2jr0o53afFwyhZmrqKlsy8EYK5eYTKIeOfkE
+
+### 
