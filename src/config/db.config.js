@@ -25,7 +25,32 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
   },
+  loginAttempts: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  lockUntil: {
+    type: Date,
+  },
 });
+
+// Verify if the user is locked out
+userSchema.methods.isLocked = function () {
+  return this.lockUntil && this.lockUntil > Date.now();
+};
+
+// Increment login attempts and set lockUntil if necessary
+userSchema.methods.incrementLoginAttempts = function () {
+  const updates = { $inc: { loginAttempts: 1 } };
+
+  if (this.lockUntil && this.lockUntil < Date.now()) {
+    updates.$set = { loginAttempts: 1 };
+    updates.$unset = { lockUntil: 1 };
+  }
+
+  return this.updateOne(updates);
+};
 
 export const User = mongoose.model("User", userSchema);
 

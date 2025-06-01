@@ -1,6 +1,9 @@
 import bcrypt from "bcrypt";
 import { User } from "../config/db.config.js";
 
+const MAX_ATTEMPTS = 5; // Maximum login attempts
+const LOCK_TIME = 15 * 60 * 1000; // Lock time in milliseconds (15 minutes)
+
 export class UserModel {
   // Register user
   static async register({ userData }) {
@@ -48,12 +51,27 @@ export class UserModel {
         throw new Error("User not found");
       }
 
+      if (user.isLocked()) {
+        throw new Error("Account is temporarily locked. Try again later.");
+      }
       const isPasswordValid = await bcrypt.compare(password, user.password);
+
       if (!isPasswordValid) {
+        await user.incrementLoginAttempts();
+
+        if (user.LoginAttempts + 1 >= MAX_ATTEMPTS) {
+          user.lockUntil = Date.now() + LOCK_TIME; // Lock the account
+          await user.save();
+          throw new Error("Account is temporarily locked. Try again later.");
+        }
+
         throw new Error("Invalid password");
       }
 
-      console.log(user._id);
+      user.loginAttempts = 0;
+      user.lockUntil = undefined;
+      await user.save();
+
       return {
         username,
         id: user._id,

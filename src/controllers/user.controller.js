@@ -34,9 +34,9 @@ export class UserController {
     } catch (error) {
       if (error.message === "Username already exists") {
         // 409 Conflict
-        res.status(409).send({ error: error.message });
+        return res.status(409).send({ error: error.message });
       }
-      res.status(400).send({ error: error.message });
+      return res.status(400).send({ error: error.message });
     }
   };
 
@@ -55,14 +55,19 @@ export class UserController {
         })
         .send({ user, token });
     } catch (error) {
+      if (error.message === "Account is temporarily locked. Try again later.") {
+        // 423 Locked
+        res.status(423).send({ error: error.message });
+      }
+
       if (
         error.message === "User not found" ||
         error.message === "Invalid password"
       ) {
         // 401 Unauthorized
-        res.status(401).send({ error: error.message });
+        return res.status(401).send({ error: error.message });
       }
-      res.status(400).send(error.message);
+      return res.status(400).send(error.message);
     }
   };
 

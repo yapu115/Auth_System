@@ -24,4 +24,3 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2E2Yzk1N
 POST http://localhost:5003/auth/refresh
 Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2I4MmExMGU5OTEwYzdhZmRjMjRkYiIsInVzZXJuYW1lIjoianVhbjMiLCJpYXQiOjE3NDg3MzA2MTEsImV4cCI6MTc0ODczNDIxMX0.qogQBte2jr0o53afFwyhZmrqKlsy8EYK5eYTKIeOfkE
 
-### 
