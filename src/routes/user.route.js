@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller.js";
-import { verifyToken } from "../middlewares/auth.middleware.js";
 import {
   registerSchema,
   loginSchema,
   changePasswordSchema,
 } from "../validations/user.validation.js";
+import { verifyToken } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.js";
 import { registerLimiter, loginLimiter } from "../middlewares/rateLimiters.js";
+import { checkRole } from "../middlewares/role.middleware.js";
 
 export const userRouter = ({ userModel }) => {
   const userRouter = Router();
@@ -45,6 +46,14 @@ export const userRouter = ({ userModel }) => {
   userRouter.get("/profile", verifyToken, (req, res) => {
     res.send({ message: "Access granted", user: req.user });
   });
+
+  // Get All Users (Admin only)
+  userRouter.get(
+    "/all",
+    verifyToken,
+    checkRole("admin"),
+    userController.getAllUsers
+  );
 
   return userRouter;
 };

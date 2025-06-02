@@ -6,8 +6,9 @@ const generateToken = ({ user }) => {
 
   const id = user.id;
   const username = user.username;
+  const role = user.role;
 
-  return jwt.sign({ id, username }, secretKey, {
+  return jwt.sign({ id, username, role }, secretKey, {
     expiresIn,
   });
 };
@@ -16,9 +17,13 @@ const generateRefreshToken = ({ user }) => {
   const secretKey = process.env.JWT_REFRESH_SECRET;
   const expiresIn = "7d";
 
-  return jwt.sign({ id: user.id, username: user.username }, secretKey, {
-    expiresIn,
-  });
+  return jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    secretKey,
+    {
+      expiresIn,
+    }
+  );
 };
 
 export class UserController {
@@ -131,5 +136,14 @@ export class UserController {
   logout = (req, res) => {
     res.clearCookie("refreshToken");
     res.send({ message: "Logged out successfully" });
+  };
+
+  getAllUsers = async (req, res) => {
+    try {
+      const users = await this.userModel.getAllUsers();
+      res.send(users);
+    } catch (error) {
+      return res.status(500).send({ error: "Error fetching users" });
+    }
   };
 }

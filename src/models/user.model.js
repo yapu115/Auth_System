@@ -75,6 +75,7 @@ export class UserModel {
       return {
         username,
         id: user._id,
+        role: user.role,
       };
     } catch (err) {
       if (
@@ -111,5 +112,14 @@ export class UserModel {
         username: user.username,
       },
     };
+  }
+
+  static async getAllUsers() {
+    try {
+      const users = await User.find({}, "-password");
+      return users;
+    } catch (err) {
+      throw new Error("Error fetching users");
+    }
   }
 }
