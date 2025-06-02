@@ -86,4 +86,30 @@ export class UserModel {
       throw new Error("Error during login");
     }
   }
+
+  static async changePassword({ passwordData }) {
+    const { userId, currentPassword, newPassword } = passwordData;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new Error("Current password is incorrect");
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    return {
+      message: "Password changed successfully",
+      userData: {
+        id: user._id,
+        username: user.username,
+      },
+    };
+  }
 }

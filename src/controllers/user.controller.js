@@ -71,6 +71,41 @@ export class UserController {
     }
   };
 
+  changePassword = async (req, res) => {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .send({ error: "Current and new passwords are required" });
+    }
+
+    const passwordData = {
+      userId,
+      currentPassword,
+      newPassword,
+    };
+
+    try {
+      const updatedUser = await this.userModel.changePassword({
+        passwordData,
+      });
+
+      res.send({ user: updatedUser });
+    } catch (error) {
+      if (error.message === "User not found") {
+        // 404 Not Found
+        return res.status(404).send({ error: error.message });
+      }
+      if (error.message === "Current password is incorrect") {
+        // 401 Unauthorized
+        return res.status(401).send({ error: error.message });
+      }
+      return res.status(400).send({ error: error.message });
+    }
+  };
+
   refreshToken = (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
